@@ -1,5 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
+from PIL import Image
+from PIL import Image, UnidentifiedImageError
+from django.db import models
+from django.conf import settings
+import os
+from users.choices import CITY_CHOICES, ACTIVITIES_CHOICES
+
+
+class Activity(models.Model):
+    name = models.CharField(max_length=100, choices=ACTIVITIES_CHOICES)
+
+    def __str__(self):
+        return self.name
 
 
 # Extending User Model Using a One-To-One Link
@@ -9,24 +22,47 @@ class Profile(models.Model):
     avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
     bio = models.TextField()
 
+
+    # preferred_activities = models.ManyToManyField(Activity, blank=True)
+    # friends = models.ManyToManyField("self", symmetrical=True, blank=True)
+    # groups = models.ManyToManyField(Group, related_name="custom_user_set", blank=True)
+    # user_permissions = models.ManyToManyField(
+    #     Permission, related_name="custom_user_set", blank=True
+    # )
     def __str__(self):
         return self.user.username
 
+    def save(self, *args, **kwargs):
+        try:
+            super().save(*args, **kwargs)
+            
+            img = Image.open(self.avatar.path)
 
-# class Activity(models.Model):
-#     name = models.CharField(max_length=100, choices=ACTIVITIES_CHOICES)
+            # Resize only if image is larger than 100x100 pixels
+            if img.height > 100 or img.width > 100:
+                new_img_size = (100, 100)
+                img.thumbnail(new_img_size, Image.ANTIALIAS)
+                img.save(self.avatar.path)
 
-#     def __str__(self):
-#         return self.name
+        except UnidentifiedImageError:
+            # Handle the case where the image file cannot be identified
+            # Log the error or use a default image instead
+            default_image_path = os.path.join(settings.MEDIA_ROOT, 'default.jpg')
+            img = Image.open(default_image_path)
+            img.save(self.avatar.path)
+
+        except Exception as e:
+            # Handle other exceptions if necessary
+            print(f"Error saving profile image: {e}")
+
 
 
 # class CustomUser(AbstractUser):
 #     # Personal information
 #     date_of_birth = models.DateField()
-#     city = models.CharField(max_length=50, choices=CITY_CHOICES)
+#     
+# city = models.CharField(max_length=50, choices=CITY_CHOICES)
 
-#     # Additional fields
-#     profile_pic = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
 #     about_myself = models.TextField(blank=True)
 
 #     # Relationships
