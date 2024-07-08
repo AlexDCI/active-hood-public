@@ -1,7 +1,16 @@
 from django.db import models
-from .choices import ACTIVITIES_CHOICES, CITY_CHOICES
-from django.contrib.auth.models import AbstractUser, Group, Permission
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
+
+
+# Extending User Model Using a One-To-One Link
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
+    bio = models.TextField()
+
+    def __str__(self):
+        return self.user.username
 
 
 # class Activity(models.Model):
