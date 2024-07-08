@@ -6,6 +6,7 @@ from users.views import ResetPasswordView
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from users.views import ChangePasswordView
 
 
 urlpatterns = [
@@ -38,6 +39,7 @@ urlpatterns = [
          name='password_reset_complete'),
 
     path('profile/', profile, name='users-profile'),
+    path('password-change/', ChangePasswordView.as_view(), name='password_change'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
