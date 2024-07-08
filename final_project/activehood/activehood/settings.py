@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "users",
     "events",
+
 ]
 
 
@@ -138,9 +139,11 @@ STATIC_URL = "static/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Set up email backend for password reset functionality 
+#DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login'
 LOGIN_URL = 'login'

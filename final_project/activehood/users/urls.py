@@ -1,14 +1,14 @@
 from django.urls import path
+from users.views import home, RegisterView, CustomLoginView    # Import the view here
 from django.contrib.auth import views as auth_views
-from users.views import register, user_login, user_logout, UserPasswordResetView, UserPasswordResetConfirmView, home
+from users.forms import LoginForm
+
 
 urlpatterns = [
-    path('register/', register, name='register'),
-    path('login/', user_login, name='login'),
-    path('logout/', user_logout, name='logout'),
-    path('password_reset/', UserPasswordResetView.as_view(), name='password_reset'),
-    path('password_reset_confirm/<uidb64>/<token>/', UserPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name='password_reset_done'),
-    path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
-    path('home', home, name='home'), 
+    path('', home, name='users-home'),
+    path('register/', RegisterView.as_view(), name='users-register'),  # This is what we added
+    path('login/', CustomLoginView.as_view(redirect_authenticated_user=True, template_name='users/login.html',
+                                          authentication_form=LoginForm), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
 ]
+    

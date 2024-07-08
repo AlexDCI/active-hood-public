@@ -1,53 +1,58 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.urls import reverse_lazy
-from users.forms import UserRegisterForm, UserPasswordResetForm, UserSetPasswordForm
-from django.contrib.auth.decorators import login_required
 
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('home')
-    else:
-        form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
+from django.shortcuts import render, redirect 
+from django.contrib import messages
+from django.views import View
+from django.contrib.auth.views import LoginView
+from users.forms import RegisterForm, LoginForm
 
-def user_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            return render(request, 'users/login.html', {'error': 'Invalid username or password'})
-    return render(request, 'users/login.html')
-
-
-def user_logout(request):
-    logout(request)
-    return redirect('login')
-
-
-class UserPasswordResetView(PasswordResetView):
-    form_class = UserPasswordResetForm
-    success_url = reverse_lazy('password_reset_done')
-    template_name = 'users/password_reset.html'
-
-class UserPasswordResetConfirmView(PasswordResetConfirmView):
-    form_class = UserSetPasswordForm
-    success_url = reverse_lazy('password_reset_complete')
-    template_name = 'users/password_reset_confirm.html'
-
-@login_required
 def home(request):
     return render(request, 'users/home.html')
 
+class RegisterView(View):
+    form_class = RegisterForm
+    initial = {'key': 'value'}
+    template_name = 'users/register.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}')
+
+            return redirect(to='login')
+
+        return render(request, self.template_name, {'form': form})
+    
+    def dispatch(self, request, *args, **kwargs):
+        # will redirect to the home page if a user tries to access the register page while logged in
+        if request.user.is_authenticated:
+            return redirect(to='/')
+
+        # else process dispatch as it otherwise normally would
+        return super(RegisterView, self).dispatch(request, *args, **kwargs)
+    
+
+# Class based view that extends from the built in login view to add a remember me functionality
+class CustomLoginView(LoginView):
+    form_class = LoginForm
+
+    def form_valid(self, form):
+        remember_me = form.cleaned_data.get('remember_me')
+
+        if not remember_me:
+            # set session expiry to 0 seconds. So it will automatically close the session after the browser is closed.
+            self.request.session.set_expiry(0)
+
+            # Set session as modified to force data updates/cookie to be saved.
+            self.request.session.modified = True
+
+        # else browser session will be as long as the session cookie time "SESSION_COOKIE_AGE" defined in settings.py
+        return super(CustomLoginView, self).form_valid(form)
+    
