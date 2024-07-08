@@ -140,6 +140,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Set up email backend for password reset functionality 
+
+
+LOGIN_URL = 'login'
