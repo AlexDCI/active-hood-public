@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # custom
     "users",
     "events",
+    "locations"
 ]
 
 

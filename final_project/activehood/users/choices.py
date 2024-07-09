@@ -43,3 +43,9 @@ CITY_CHOICES = [
     ("Bonn", "Bonn"),
     ("Münster", "Münster"),
 ]
+
+LEVEL_CHOICES = [
+    ("Advanced", "Advanced"),
+    ("Intermediate", "Intermediate"),
+    ("Beginner", "Beginner")
+    ]
