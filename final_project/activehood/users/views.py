@@ -68,7 +68,7 @@ class CustomLoginView(LoginView):
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'users/password_reset.html'
     email_template_name = 'users/password_reset_email.html'
-    subject_template_name = 'users/password_reset_subject'
+    subject_template_name = 'users/password_reset_subject.txt'
     success_message = "We've emailed you instructions for setting your password, " \
                       "if an account exists with the email you entered. You should receive them shortly." \
                       " If you don't receive an email, " \
@@ -83,7 +83,7 @@ def profile(request):
         user_form = UpdateUserForm(request.POST, instance=request.user)
         profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
         formset = ProfileActivityFormSet(request.POST, instance=request.user.profile)
-
+        print(formset.is_valid(), formset.errors)
         if user_form.is_valid() and profile_form.is_valid() and formset.is_valid():
             user_form.save()
             profile_form.save()
