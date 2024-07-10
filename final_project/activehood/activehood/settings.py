@@ -14,8 +14,6 @@ from pathlib import Path
 from decouple import config
 import os
 
-from dotenv import load_dotenv
-load_dotenv()  # loads the configs from .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +28,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -171,8 +169,8 @@ AUTHENTICATION_BACKENDS = (
 
 # social auth configs for google
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '948409983842-iu1ghrqfb06b8q25f59sefs8s956gtra.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'YGOCSPX-HKcrCMJJE72crDKmbHJxHNWRiWVo'
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/oauth2callback'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/oauth/complete/google-oauth2/'
 
 
 # email configs
@@ -180,9 +178,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = str(os.getenv('EMAIL_USER'))
-EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_PASSWORD'))
-
+EMAIL_HOST_USER = config('EMAIL_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
