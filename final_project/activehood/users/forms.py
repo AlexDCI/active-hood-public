@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.contrib.auth.models import User
-from users.models import Profile, Activity
+from django.forms import inlineformset_factory
+from users.models import Profile, Activity, ProfileActivity
+from locations.models import City
 
 
 
@@ -135,4 +137,13 @@ class UpdateProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['avatar', 'bio']
+        fields = ['avatar', 'bio', 'city']
+    city = forms.ModelChoiceField(queryset=City.objects.all(), required=False)
+
+
+class ProfileActivityForm(forms.ModelForm):
+    class Meta:
+        model = ProfileActivity
+        fields = ['activity', 'skill_level']
+
+ProfileActivityFormSet = inlineformset_factory(Profile, ProfileActivity, form=ProfileActivityForm, extra=1)

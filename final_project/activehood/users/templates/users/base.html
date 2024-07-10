@@ -39,7 +39,10 @@
               <a href="{% url 'users-profile' %}" class="nav-item nav-link"
                 >Profile</a
               >
-              <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>
+              <form id="logout-form" method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Logout</button>
+            </form>
               {% else %}
               <a href="{% url 'login' %}" class="nav-item nav-link">Sign in</a>
               {% endif %}

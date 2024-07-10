@@ -36,8 +36,29 @@
           <label class="small mb-1">Change Avatar:</label>
           {{ profile_form.avatar }}
         </div>
-        <label class="small mb-1">Bio:</label> {{ profile_form.bio }}
+        <label class="small mb-1">Bio:</label> 
+        {{ profile_form.bio }}
       </div>
+    </div>
+    <div class="form-group mt-4">
+      <h4>Preferred Activities</h4>
+      {{ formset.management_form }}
+      {% for form in formset %}
+      <div class="form-row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label class="small mb-1">{{ form.activity.label }}</label>
+            {{ form.activity }}
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <label class="small mb-1">{{ form.skill_level.label }}</label>
+            {{ form.skill_level }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
     <br /><br />
     <button type="submit" class="btn btn-dark btn-lg">Save Changes</button>
