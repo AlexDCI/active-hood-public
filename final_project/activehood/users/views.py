@@ -84,6 +84,7 @@ def profile(request):
         profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
         formset = ProfileActivityFormSet(request.POST, instance=request.user.profile)
         print(formset.is_valid(), formset.errors)
+        
         if user_form.is_valid() and profile_form.is_valid() and formset.is_valid():
             user_form.save()
             profile_form.save()

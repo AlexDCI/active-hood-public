@@ -80,7 +80,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # for sign in with social media
+                # for login with social media
                 "social_django.context_processors.backends",
                 "social_django.context_processors.login_redirect",
             ],
