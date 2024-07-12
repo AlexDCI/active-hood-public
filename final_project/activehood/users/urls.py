@@ -3,7 +3,6 @@ from django.contrib.auth import views as auth_views
 from users.forms import LoginForm
 from django.urls import path, include, re_path
 from users.views import ResetPasswordView
-from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from users.views import ChangePasswordView

@@ -6,7 +6,7 @@
       <div class="col-lg-5">
         <div class="card shadow-lg border-0 rounded-lg mt-0 mb-3">
           <div class="card-header justify-content-center">
-            <h3 class="font-weight-light my-1 text-center">Sign In</h3>
+            <h3 class="font-weight-light my-1 text-center">Login</h3>
           </div>
           {% if form.errors %}
           <div class="alert alert-danger alert-dismissible" role="alert">
@@ -34,7 +34,7 @@
                     <a
                       href="{% url 'social:begin' 'google-oauth2' %}"
                       class="btn btn-link btn-lg active btn-block"
-                      >Sign in with Google</a
+                      >Login with Google</a
                     >
                     <hr />
                     <p class="text-center"><strong>OR</strong></p>
@@ -68,8 +68,7 @@
                       name="login"
                       class="col-md-12 btn btn-dark"
                       id="login"
-                    >
-                      Sign in
+                    >Login
                     </button>
                   </div>
                 </div>
@@ -79,7 +78,7 @@
           <div class="card-footer text-center">
             <div class="small">
               <a href="{% url 'users-register' %}"
-                >Don't have an account yet? Go to signup</a
+                >Don't have an account yet? Go to Register</a
               ><br />
               <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a>
             </div>
