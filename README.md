@@ -7,9 +7,14 @@
 
 SECRET_KEY=sample
 
+SECRET_KEY=sample
+
 DB_NAME=sample
 DB_USER=sample
 DB_PASS=sample
+
+EMAIL_USER= #your email
+EMAIL_HOST_PASSWORD= #password to your email
 
 5. python manage.py makemigrations
 6. python manage.py migrate
