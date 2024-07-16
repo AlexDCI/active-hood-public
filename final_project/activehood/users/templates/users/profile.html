@@ -60,6 +60,18 @@
       </div>
       {% endfor %}
     </div>
+    <h4 class="mt-4">Current Preferred Activities</h4>
+<ul>
+    {% for profile_activity in user.profile.profileactivity_set.all %}
+        <li>
+            Activity: {{ profile_activity.activity.name }} - Level: {{ profile_activity.skill_level }}
+        </li>
+    {% empty %}
+        <li>No preferred activities listed.</li>
+    {% endfor %}
+</ul>
+
+    
     <br /><br />
     <button type="submit" class="btn btn-dark btn-lg">Save Changes</button>
     <button type="reset" class="btn btn-dark btn-lg">Reset</button>

@@ -11,6 +11,7 @@ from users.forms import UpdateUserForm, UpdateProfileForm, ProfileActivityFormSe
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
+from users.models import ProfileActivity
 
 def home(request):
     return render(request, "users/home.html")
@@ -75,31 +76,46 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('users-home')
 
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import UpdateUserForm, UpdateProfileForm, ProfileActivityFormSet
 
 @login_required
 def profile(request):
+    profile_instance = request.user.profile  # Get the profile instance
+    
     if request.method == 'POST':
         user_form = UpdateUserForm(request.POST, instance=request.user)
-        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        formset = ProfileActivityFormSet(request.POST, instance=request.user.profile)
-        print(formset.is_valid(), formset.errors)
-        if user_form.is_valid() and profile_form.is_valid() and formset.is_valid():
-            user_form.save()
-            profile_form.save()
-            formset.save()
-            messages.success(request, 'Your profile is updated successfully')
-            return redirect(to='users-profile')
+        profile_form = UpdateProfileForm(request.POST, request.FILES, instance=profile_instance)
+        formset = ProfileActivityFormSet(request.POST, instance=profile_instance, profile=profile_instance)
+
+        try:
+            if user_form.is_valid() and profile_form.is_valid() and formset.is_valid():
+                user_form.save()
+                profile_form.save()
+                formset.save()  # Saves the formset
+                messages.success(request, 'Your profile is updated successfully')
+                return redirect('users-profile')
+            else:
+                # Handle validation errors
+                messages.error(request, 'Please correct the errors below.')
+        except Exception as e:
+            messages.error(request, 'An error occurred while updating your profile. Please try again later.')
+            print(f"Error: {e}")
+
     else:
         user_form = UpdateUserForm(instance=request.user)
-        profile_form = UpdateProfileForm(instance=request.user.profile)
-        formset = ProfileActivityFormSet(instance=request.user.profile)
+        profile_form = UpdateProfileForm(instance=profile_instance)
+        formset = ProfileActivityFormSet(queryset=ProfileActivity.objects.filter(profile=profile_instance), profile=profile_instance)
 
-    return render(request, 'users/profile.html', {
-        'user_form': user_form, 
+    context = {
+        'user_form': user_form,
         'profile_form': profile_form,
-        'formset': formset
-        })
+        'formset': formset,
+    }
+    return render(request, 'users/profile.html', context)
+
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/change_password.html'

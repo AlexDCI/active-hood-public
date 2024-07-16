@@ -20,6 +20,10 @@ class ProfileActivity(models.Model):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
     skill_level = models.CharField(max_length=50,choices=LEVEL_CHOICES,blank=True,null=True)
 
+
+    class Meta:
+        unique_together = ('profile', 'activity')  # Ensures unique activity per profile
+        
     def __str__(self):
         return f"{self.profile.user.username} - {self.activity.name} - {self.skill_level}"
     
@@ -30,8 +34,6 @@ class Profile(models.Model):
     avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
     bio = models.TextField()
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
-
-    preferred_activities = models.ManyToManyField(Activity, through=ProfileActivity, blank=True)
     friends = models.ManyToManyField("self", symmetrical=True, blank=True)
     groups = models.ManyToManyField(Group, related_name="custom_user_set", blank=True)
     user_permissions = models.ManyToManyField(

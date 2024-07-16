@@ -3,9 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.contrib.auth.models import User
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from users.models import Profile, Activity, ProfileActivity
 from locations.models import City
+
 
 
 
@@ -149,5 +150,27 @@ class ProfileActivityForm(forms.ModelForm):
     class Meta:
         model = ProfileActivity
         fields = ['activity', 'skill_level']
+    
+    def __init__(self, *args, **kwargs):
+        profile = kwargs.pop('profile', None)  # Get the profile instance, default to None
+        super().__init__(*args, **kwargs)
 
-ProfileActivityFormSet = inlineformset_factory(Profile, ProfileActivity, form=ProfileActivityForm, extra=1)
+        if profile:
+            # Get already chosen activities
+            chosen_activities = ProfileActivity.objects.filter(profile=profile).values_list('activity_id', flat=True)
+            # Exclude chosen activities from the queryset
+            self.fields['activity'].queryset = Activity.objects.exclude(id__in=chosen_activities)
+
+class ProfileActivityFormSet(BaseInlineFormSet):
+    def __init__(self, *args, profile=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if profile:
+            # Get already chosen activities
+            chosen_activities = ProfileActivity.objects.filter(profile=profile).values_list('activity_id', flat=True)
+            # Update the queryset for each form's activity field
+            for form in self.forms:
+                if hasattr(form, 'fields') and 'activity' in form.fields:
+                    form.fields['activity'].queryset = Activity.objects.exclude(id__in=chosen_activities)
+
+ProfileActivityFormSet = inlineformset_factory(Profile, ProfileActivity, form=ProfileActivityForm, formset=ProfileActivityFormSet, extra=1)
