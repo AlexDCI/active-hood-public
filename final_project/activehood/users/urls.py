@@ -5,11 +5,14 @@ from django.urls import path, include, re_path
 from users.views import ResetPasswordView
 from django.conf import settings
 from django.conf.urls.static import static
-from users.views import ChangePasswordView
+from users.views import ChangePasswordView, add_activity, update_activity,  delete_activity
 
 
 urlpatterns = [
     path("", home, name="users-home"),
+        path('add-activity/', add_activity, name='add-activity'),
+    path('update-activity/<int:activity_id>/', update_activity, name='update-activity'),
+    path('delete-activity/<int:activity_id>/', delete_activity, name='delete-activity'),
     path("register/", RegisterView.as_view(), name="users-register"),
     path(
         "login/",

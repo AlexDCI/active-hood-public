@@ -67,28 +67,3 @@ class Profile(models.Model):
             print(f"Error saving profile image: {e}")
 
 
-
-# class CustomUser(AbstractUser):
-#     # Personal information
-#     date_of_birth = models.DateField()
-#     
-# city = models.CharField(max_length=50, choices=CITY_CHOICES)
-
-#     about_myself = models.TextField(blank=True)
-
-#     # Relationships
-#     preferred_activities = models.ManyToManyField(Activity, blank=True)
-#     friends = models.ManyToManyField("self", symmetrical=True, blank=True)
-
-#     groups = models.ManyToManyField(Group, related_name="custom_user_set", blank=True)
-#     user_permissions = models.ManyToManyField(
-#         Permission, related_name="custom_user_set", blank=True
-#     )
-
-#     def save(self, *args, **kwargs):
-#         if self.password:
-#             self.password = make_password(self.password)
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return f"{self.username} ({self.get_full_name()})"
