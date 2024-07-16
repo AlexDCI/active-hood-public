@@ -13,11 +13,23 @@ class CreateEvent(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(creator=request.user)  
-            return Response(serializer.data, status=201)  
-        return Response(serializer.errors, status=400) 
+        if request.content_type == '':
+            form = EventForm(request.POST)
+            if form.is_valid():
+                event = form.save(commit=False)
+                event.creator = request.user
+                event.save()
+                serializer = EventSerializer(event)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        else: 
+            serializer = EventSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(creator=request.user)  
+                return Response(serializer.data, status=201)  
+            return Response(serializer.errors, status=400) 
 
 class EventDetail(APIView):
     permission_classes = [IsAuthenticated]
