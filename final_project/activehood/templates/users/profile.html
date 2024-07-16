@@ -1,0 +1,94 @@
+{% extends "users/base.html" %} {% block title %}Profile Page{% endblock title
+%} {% block content %}
+<div class="row my-3 p-3">
+  <img
+    class="rounded-circle account-img"
+    src="{{ user.profile.avatar.url }}"
+    style="cursor: pointer"
+  />
+</div>
+
+{% if user_form.errors %}
+<div class="alert alert-danger alert-dismissible" role="alert">
+  <div id="form_errors">
+    {% for key, value in user_form.errors.items %}
+    <strong>{{ value }}</strong>
+    {% endfor %}
+  </div>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+
+<div class="form-content">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="col-md-5">
+        <div class="form-group">
+          <label class="small mb-1">Username:</label>
+          {{ user_form.username }}
+          <label class="small mb-1">Email:</label>
+          {{ user_form.email }}
+        </div>
+        <div class="form-group">
+          <a href="{% url 'password_change' %}">Change Password</a>
+          <hr />
+          <label class="small mb-1">Change Avatar:</label>
+          {{ profile_form.avatar }}
+        </div>
+        <label class="small mb-1">Bio:</label>
+        {{ profile_form.bio }}
+      </div>
+    </div>
+
+    <div class="form-group mt-4">
+      <h4>Preferred Activities</h4>
+      {{ formset.management_form }} {% for form in formset %} {{ form.id }}
+      <div class="form-row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label class="small mb-1">{{ form.activity.label }}</label>
+            {{ form.activity }}
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <label class="small mb-1">{{ form.skill_level.label }}</label>
+            {{ form.skill_level }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <h4 class="mt-4">Current Preferred Activities</h4>
+    <ul>
+      {% for profile_activity in user.profile.profileactivity_set.all %}
+      <li>
+        Activity: {{ profile_activity.activity.name }} - Level: {{
+        profile_activity.skill_level }}
+      </li>
+      {% empty %}
+      <li>No preferred activities listed.</li>
+      {% endfor %}
+    </ul>
+
+    <br /><br />
+    <button type="submit" class="btn btn-dark btn-lg">Save Changes</button>
+    <button type="reset" class="btn btn-dark btn-lg">Reset</button>
+  </form>
+
+  <h4 class="mt-4">Current Preferred Activities</h4>
+  <ul>
+    {% for profile_activity in user.profile.profileactivity_set.all %}
+    <li>
+      Activity: {{ profile_activity.activity.name }} - Level: {{
+      profile_activity.skill_level }}
+    </li>
+    {% empty %}
+    <li>No preferred activities listed.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock content %}
