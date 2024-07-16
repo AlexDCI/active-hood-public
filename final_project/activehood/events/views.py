@@ -4,9 +4,9 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Event
-from .serializers import EventSerializer
-from .forms import EventForm
+from events.models import Event
+from events.serializers import EventSerializer
+from events.forms import EventForm
 # from rest_framework.filters import GeoDjangoFilter
 
 class CreateEvent(APIView):

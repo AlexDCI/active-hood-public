@@ -20,6 +20,7 @@ class ProfileActivity(models.Model):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
     skill_level = models.CharField(max_length=50,choices=LEVEL_CHOICES,blank=True,null=True)
 
+
     def __str__(self):
         return f"{self.profile.user.username} - {self.activity.name} - {self.skill_level}"
     
