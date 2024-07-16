@@ -13,7 +13,7 @@ class CreateEvent(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if request.content_type == '':
+        if request.content_type == 'application/x-www-form-urlencoded':
             form = EventForm(request.POST)
             if form.is_valid():
                 event = form.save(commit=False)
