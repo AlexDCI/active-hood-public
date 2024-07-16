@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.views import LoginView
@@ -83,27 +83,19 @@ from .forms import UpdateUserForm, UpdateProfileForm, ProfileActivityFormSet
 
 @login_required
 def profile(request):
-    profile_instance = request.user.profile  # Get the profile instance
+    profile_instance = request.user.profile
     
     if request.method == 'POST':
         user_form = UpdateUserForm(request.POST, instance=request.user)
         profile_form = UpdateProfileForm(request.POST, request.FILES, instance=profile_instance)
         formset = ProfileActivityFormSet(request.POST, instance=profile_instance, profile=profile_instance)
 
-        try:
-            if user_form.is_valid() and profile_form.is_valid() and formset.is_valid():
-                user_form.save()
-                profile_form.save()
-                formset.save()  # Saves the formset
-                messages.success(request, 'Your profile is updated successfully')
-                return redirect('users-profile')
-            else:
-                # Handle validation errors
-                messages.error(request, 'Please correct the errors below.')
-        except Exception as e:
-            messages.error(request, 'An error occurred while updating your profile. Please try again later.')
-            print(f"Error: {e}")
-
+        if user_form.is_valid() and profile_form.is_valid() and formset.is_valid():
+            user_form.save()
+            profile_form.save()
+            formset.save()
+            messages.success(request, 'Your profile is updated successfully!')
+            return redirect('users-profile')
     else:
         user_form = UpdateUserForm(instance=request.user)
         profile_form = UpdateProfileForm(instance=profile_instance)
@@ -117,7 +109,53 @@ def profile(request):
     return render(request, 'users/profile.html', context)
 
 
+
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/change_password.html'
     success_message = "Successfully Changed Your Password"
     success_url = reverse_lazy('users-home')
+
+@login_required
+def add_activity(request):
+    if request.method == 'POST':
+        form = ProfileActivityForm(request.POST, profile=request.user.profile)
+        if form.is_valid():
+            profile_activity = form.save(commit=False)
+            profile_activity.profile = request.user.profile
+            profile_activity.save()
+            messages.success(request, 'Activity added successfully!')
+            return redirect('users-profile')  # Redirect to the profile page or any other
+    else:
+        form = ProfileActivityForm(profile=request.user.profile)
+
+    context = {'form': form}
+    return render(request, 'users/add_activity.html', context)
+
+
+@login_required
+def update_activity(request, activity_id):
+    profile_activity = get_object_or_404(ProfileActivity, id=activity_id, profile=request.user.profile)
+    
+    if request.method == 'POST':
+        form = ProfileActivityForm(request.POST, instance=profile_activity)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Activity updated successfully!')
+            return redirect('users-profile')  # Redirect after success
+    else:
+        form = ProfileActivityForm(instance=profile_activity)
+
+    context = {'form': form}
+    return render(request, 'users/update_activity.html', context)
+
+
+@login_required
+def delete_activity(request, activity_id):
+    profile_activity = get_object_or_404(ProfileActivity, id=activity_id, profile=request.user.profile)
+    if request.method == 'POST':
+        profile_activity.delete()
+        messages.success(request, 'Activity deleted successfully!')
+        return redirect('users-profile')  # Redirect after deletion
+
+    context = {'profile_activity': profile_activity}
+    return render(request, 'users/delete_activity.html', context)
