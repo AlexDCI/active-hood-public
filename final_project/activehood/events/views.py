@@ -13,14 +13,11 @@ class CreateEvent(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = EventSerializer
+        serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
-            if 'location' not in request.data:
-        # Set a temporary location (replace with your logic later)
-                serializer.validated_data['location'] = "Placeholder City"
             serializer.save(creator=request.user)  
             return Response(serializer.data, status=201)  
-        return Response(serializer.errors, status=400)  
+        return Response(serializer.errors, status=400) 
 
 class EventDetail(APIView):
     permission_classes = [IsAuthenticated]
