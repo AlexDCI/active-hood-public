@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
-from users.forms import UpdateUserForm, UpdateProfileForm, ProfileActivityFormSet
+from users.forms import UpdateUserForm, UpdateProfileForm, ProfileActivityFormSet,  ProfileActivityForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
