@@ -10,7 +10,7 @@ class Event(models.Model):
     date = models.DateTimeField()
     location = models.ForeignKey(City, on_delete=models.CASCADE, null=True) #temporarily optional
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_events') # from a User instance, you can access the events they created via user.created_events.all()
-    participation = models.ManyToManyField(User, blank=True, related_name='participating_events') # from a User instance, you can access the events they are participating in via user.participating_events.all()
+    participants = models.ManyToManyField(User, blank=True,related_name='participating_events') # from a User instance, you can access the events they are participating in via user.participating_events.all()
     
     def __str__(self):
         return f"{self.name}, {self.date}"

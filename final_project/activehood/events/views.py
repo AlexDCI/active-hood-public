@@ -42,7 +42,7 @@ class EventDetail(APIView):
         except Event.DoesNotExist:
             return Response(status=404)  
 
-        serializer = EventSerializer(event, include='participants')
+        serializer = EventSerializer(event)
         return Response(serializer.data)
 
 class MyEventsList(generics.ListAPIView):
@@ -115,7 +115,7 @@ class JoinEvent(APIView):
         event.participants.add(user)
         event.save()
 
-        serializer = EventSerializer(event, include='participants')  # Optional for user data
+        serializer = EventSerializer(event)  # Optional for user data
         return Response(serializer.data, status=201)
 
 
