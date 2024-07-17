@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="event",
-            name="participation",
+            name="participants",
             field=models.ManyToManyField(
                 blank=True,
                 related_name="participating_events",
