@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from users.models import Profile, Activity, ProfileActivity
 from locations.models import City
+from django.core.exceptions import ValidationError
 
 
 
@@ -90,6 +91,11 @@ class RegisterForm(UserCreationForm):
             
             
         ]
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("A user with that email already exists.")
+        return email
 
 
 class LoginForm(AuthenticationForm):
