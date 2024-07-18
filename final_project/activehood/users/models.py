@@ -31,7 +31,7 @@ class ProfileActivity(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
+    avatar = models.ImageField(upload_to='profile_images/', default='profile_images/default.png')
     bio = models.TextField()
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
     friends = models.ManyToManyField("self", symmetrical=True, blank=True)
