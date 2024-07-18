@@ -12,6 +12,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from users.models import ProfileActivity
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 
 def home(request):
     return render(request, "users/home.html")
@@ -30,12 +32,14 @@ class RegisterView(View):
         form = self.form_class(request.POST)
 
         if form.is_valid():
-            form.save()
-
-            username = form.cleaned_data.get("username")
-            messages.success(request, f"Account created for {username}")
-
-            return redirect(to="login")
+            try:
+                form.save()
+                username = form.cleaned_data.get("username")
+                messages.success(request, f"Account created for {username}")
+                return redirect(to="login")
+            except IntegrityError:
+                messages.error(request, "An account with that email already exists.")
+                return render(request, self.template_name, {"form": form})
 
         return render(request, self.template_name, {"form": form})
 

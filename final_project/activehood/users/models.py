@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.contrib.auth.models import User, Group, Permission
 from PIL import Image
 from PIL import Image, UnidentifiedImageError
@@ -61,9 +61,17 @@ class Profile(models.Model):
             default_image_path = os.path.join(settings.MEDIA_ROOT, 'default.jpg')
             img = Image.open(default_image_path)
             img.save(self.avatar.path)
+        
+        except IntegrityError as e:
+            # Handle the IntegrityError, which occurs when the email is not unique
+            print(f"IntegrityError: {e}")
+            # Here you can add custom logic to notify the user or handle the error
+            raise
 
         except Exception as e:
             # Handle other exceptions if necessary
             print(f"Error saving profile image: {e}")
+        
+        
 
 
