@@ -13,7 +13,16 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-            migrations.AlterField(
+        migrations.AddField(
+            model_name="event",
+            name="participants",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="participating_events",
+                to=settings.AUTH_USER_MODEL,
+            ),
+        ),
+        migrations.AlterField(
             model_name="event",
             name="creator",
             field=models.ForeignKey(
