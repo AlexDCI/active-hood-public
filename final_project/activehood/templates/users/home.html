@@ -1,25 +1,106 @@
-{% extends "base.html" %} {% block title %} Home Page {% endblock title %}
-{% block content %}
-<div class="jumbotron">
-  <h1 class="display-4">Welcome</h1>
-  <p class="lead">
-    This is <b>user registration and login system</b> built with Django, a
-    Python-based free and open-source web framework that follows the
-    model–template–views architectural pattern.
-  </p>
-  <hr class="my-4" />
-  <p class="lead">
-    {% if user.is_authenticated %}
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button class="btn btn-primary btn-lg" type="submit">Logout</button>
-</form>
-    {% else %}
-    <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button"
-      >Login</a
-    >
-    {% endif %}
-  </p>
-</div>
+{% extends "base.html" %}
 
+{% block title %} Home Page {% endblock title %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="display-4 mb-4">Welcome to ActiveHood!</h1>
+        {% if user.is_authenticated %}
+        <p class="lead">
+          Welcome back, {{ user.username }}! Explore new activities, connect with friends, and stay active with ActiveHood.
+        </p>
+        <hr class="my-4" />
+        <p class="lead">
+          Discover local events, join groups, and share your experiences with others who share your passion for sports and fitness.
+        </p>
+        <p class="lead">
+          Ready to continue your journey? Check out our latest updates and connect with your community today!
+        </p>
+        {% else %}
+        <p class="lead">
+          ActiveHood is a vibrant social media platform designed for sports enthusiasts looking to connect with like-minded individuals. Whether you're passionate about running, cycling, soccer, or yoga, ActiveHood makes it easy to find friends who share your interests.
+        </p>
+        <hr class="my-4" />
+        <p class="lead">
+          With a user-friendly interface, you can create a profile highlighting your favorite sports, join local groups, and participate in events tailored to your activity level. Share your achievements, seek advice, or simply find workout buddies in your area.
+        </p>
+        <p class="lead">
+          ActiveHood fosters a supportive community, encouraging users to motivate one another and build lasting friendships through shared passions. Join ActiveHood today and take your sports experience to the next level!
+        </p>
+        <a class="btn btn-primary btn-lg mt-3" href="{% url 'users-register' %}" role="button">Join Now</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="feature-item text-center mb-4">
+          <span class="icon"><i class="fas fa-users fa-3x"></i></span>
+          <h3 class="mt-3">Connect with Others</h3>
+          <p>Find friends who share your passion for sports and activities.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-item text-center mb-4">
+          <span class="icon"><i class="fas fa-calendar-alt fa-3x"></i></span>
+          <h3 class="mt-3">Join Events</h3>
+          <p>Participate in local events and activities tailored to your interests.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-item text-center mb-4">
+          <span class="icon"><i class="fas fa-comments fa-3x"></i></span>
+          <h3 class="mt-3">Engage with Community</h3>
+          <p>Share achievements, seek advice, and motivate others in our supportive community.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">What Our Users Say</h2>
+    <div class="row">
+      <div class="col-lg-6 mx-auto">
+        <div class="testimonial-item text-center p-4 shadow">
+          <p class="lead mb-4">"ActiveHood has helped me find new running buddies and stay motivated. I love the community spirit!"</p>
+          <cite>- Sarah D.</cite>
+        </div>
+      </div>
+      <div class="col-lg-6 mx-auto mt-4 mt-lg-0">
+        <div class="testimonial-item text-center p-4 shadow">
+          <p class="lead mb-4">"As a soccer enthusiast, ActiveHood has connected me with local players and leagues. It's been fantastic!"</p>
+          <cite>- John S.</cite>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section text-center py-5 bg-light">
+  <div class="container">
+    <h2 class="mb-4">Ready to Get Active?</h2>
+    {% if user.is_authenticated %}
+    <p class="lead">Explore more features tailored just for you.</p>
+    {% else %}
+    <p class="lead">
+      Join ActiveHood today and take your sports experience to the next level!
+    </p>
+    <a class="btn btn-primary btn-lg" href="{% url 'users-register' %}" role="button">Sign Up Now</a>
+    {% endif %}
+  </div>
+</section>
 {% endblock content %}
+
