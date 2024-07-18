@@ -73,7 +73,7 @@ class UserEventsList(generics.ListAPIView):
                 user = User.objects.get(pk=user_id)
                 print(user)
                 filtered_events = Event.objects.filter(creator=user)
-                print(filtered_events)  # This will print the actual queryset of events
+                print(filtered_events) 
                 return filtered_events 
                
             except User.DoesNotExist:

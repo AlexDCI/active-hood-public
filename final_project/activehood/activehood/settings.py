@@ -102,6 +102,14 @@ DATABASES = {
         "PASSWORD": config("DB_PASS"),
         "HOST": "localhost",
         "PORT": "5432",
+    },
+    'test': {
+        'ENGINE': 'django.db.backends.postgresql',  
+        'NAME': 'test_activehood',  
+        'USER': config('DB_TEST_USER', default=config('DB_USER')),  
+        'PASSWORD': config('DB_TEST_PASS', default=config('DB_PASS')), 
+        'HOST': 'localhost',  
+        'PORT': '5432',  
     }
 }
 
