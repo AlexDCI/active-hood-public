@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'  
 
 class EventSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True, read_only=True)  # Nested serializer for participants
+    participants = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all()) # Nested serializer for participants
 
     class Meta:
         model = Event

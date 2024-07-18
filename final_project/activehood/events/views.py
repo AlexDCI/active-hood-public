@@ -40,7 +40,7 @@ class EventDetail(APIView):
         try:
             event = Event.objects.get(pk=pk)
         except Event.DoesNotExist:
-            return Response(status=404)  
+            return Response({"message": "This event does not exist"}, status=404)  
 
         serializer = EventSerializer(event)
         return Response(serializer.data)
@@ -104,7 +104,7 @@ class JoinEvent(APIView):
         try:
             event = Event.objects.get(pk=pk)
         except Event.DoesNotExist:
-            return Response(status=404)
+            return Response({"message": "This event does not exist"},status=404)
 
         user = request.user
 
@@ -114,10 +114,10 @@ class JoinEvent(APIView):
 
         event.participants.add(user)
         event.save()
+        event = Event.objects.get(pk=event.pk)  # Get the updated event from the database
 
         serializer = EventSerializer(event)  # Optional for user data
         return Response(serializer.data, status=201)
-
 
 class LeaveEvent(APIView):
     permission_classes = [IsAuthenticated]
@@ -126,7 +126,7 @@ class LeaveEvent(APIView):
         try:
             event = Event.objects.get(pk=pk)
         except Event.DoesNotExist:
-            return Response(status=404)
+            return Response({"message": "This event does not exist"}, status=404)
 
         user = request.user
 
@@ -137,7 +137,7 @@ class LeaveEvent(APIView):
         event.participants.remove(user)
         event.save()
 
-        return Response(status=204) 
+        return Response({"message": "You successfully left this event"},status=204) 
 
 class UpdateEvent(APIView):
     def put(self, request, pk):
@@ -155,6 +155,13 @@ class UpdateEvent(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+    
+    def post(self, request, pk):
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(creator=request.user)  
+            return Response(serializer.data, status=201)  
+        return Response(serializer.errors, status=400) 
 
 class DeleteEvent(APIView):
     def delete(self, request, pk):
@@ -170,3 +177,9 @@ class DeleteEvent(APIView):
         event.delete()
         return Response(status=204)     
 
+    def post(self, request, pk):
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(creator=request.user)  
+            return Response(serializer.data, status=201)  
+        return Response(serializer.errors, status=400) 
