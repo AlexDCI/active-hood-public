@@ -76,10 +76,6 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('users-home')
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
-from .forms import UpdateUserForm, UpdateProfileForm, ProfileActivityFormSet
 
 @login_required
 def profile(request):
