@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from users.models import User
 from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -70,12 +71,16 @@ class UserEventsList(generics.ListAPIView):
         if user_id:
             try:
                 user = User.objects.get(pk=user_id)
-                return Event.objects.filter(creator=user)
+                print(user)
+                filtered_events = Event.objects.filter(creator=user)
+                print(filtered_events) 
+                return filtered_events 
+               
             except User.DoesNotExist:
                 return Event.objects.none()
         else:
             return Event.objects.none()
-
+    
     serializer_class = EventSerializer
     
 class EventListByLocation(generics.ListAPIView):
@@ -116,7 +121,7 @@ class JoinEvent(APIView):
         event.save()
 
         serializer = EventSerializer(event)  # Optional for user data
-        return Response(serializer.data, status=201)
+        return Response({"message":"You successfully joined the event"}, serializer.data, status=201)
 
 
 class LeaveEvent(APIView):
@@ -159,7 +164,7 @@ class UpdateEvent(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        return Response({"message": "You successfully left this event"}, serializer.errors, status=400)
     
 
 class DeleteEvent(APIView):
