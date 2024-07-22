@@ -30,6 +30,9 @@
                     <div class="mb-3">
                         <label for="id_email" class="form-label">Email</label>
                         {{ user_form.email }}
+                        
+                     <div class="mb-3">
+                    <a href="{% url 'password_change' %}" class="btn btn-link mb-3">Change Password</a>
                     </div>
                     <div class="mb-3">
                         <label for="id_avatar" class="form-label">Change Avatar</label>
@@ -42,8 +45,9 @@
                     <div class="mb-3">
                         <label for="id_city" class="form-label">City</label>
                         {{ profile_form.city }}
+
                     </div>
-                    <a href="{% url 'password_change' %}" class="btn btn-link mb-3">Change Password</a>
+
 
                     <h4 class="mt-4">Preferred Activities</h4>
                     {{ formset.management_form }}
@@ -63,14 +67,8 @@
                         </div>
                     </div>
                     {% endfor %}
-
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
-                        <button type="reset" class="btn btn-secondary btn-lg">Reset</button>
-                    </div>
-                </form>
-
-                <h4 class="mt-5">Current Preferred Activities</h4>
+                    
+                                    <h4 class="mt-5">Current Preferred Activities</h4>
                 <ul class="list-group">
                     {% for profile_activity in user.profile.profileactivity_set.all %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -84,6 +82,14 @@
                     <li class="list-group-item">No preferred activities listed.</li>
                     {% endfor %}
                 </ul>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                        <button type="reset" class="btn btn-secondary btn-lg">Reset</button>
+                    </div>
+                </form>
+
+
             </div>
         </div>
     </div>
