@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from events.models import Event
 from events.serializers import EventSerializer
-from events.forms import EventForm
 from django.contrib import messages
 
 # from rest_framework.filters import GeoDjangoFilter
@@ -16,23 +15,12 @@ class CreateEvent(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if request.content_type == 'application/x-www-form-urlencoded':
-            form = EventForm(request.POST)
-            if form.is_valid():
-                event = form.save(commit=False)
-                event.creator = request.user
-                event.save()
-                serializer = EventSerializer(event)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
-            
-        else: 
-            serializer = EventSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(creator=request.user)  
-                return Response(serializer.data, status=201)  
-            return Response(serializer.errors, status=400) 
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(creator=request.user)  
+            return Response(serializer.data, status=201)  
+        return Response(serializer.errors, status=400) 
+
 
 class EventDetail(APIView):
     permission_classes = [IsAuthenticated]
@@ -45,6 +33,36 @@ class EventDetail(APIView):
 
         serializer = EventSerializer(event)
         return Response(serializer.data)
+    
+    def put(self, request, pk):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response({"message": "This event does not exist"}, status=404)
+
+        # Check if user is authorized to update (creator)
+        if event.creator != request.user:
+            return Response({"message": "Only the creator can update event"}, status=403)
+
+        serializer = EventSerializer(event, data=request.data, partial=True) # allows updating specific fields without requiring all data.
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response({"message": "You successfully updated this event"}, serializer.errors, status=400)
+    
+    def delete(self, request, pk):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response({"message": "This event does not exist"}, status=404)
+
+        # Check if user is authorized to delete (creator)
+        if event.creator != request.user:
+            return Response({"message": "Only the creator can delete event"}, status=403)
+
+        event.delete()
+        return Response({"message": "You successfully deleted this event"}, status=204)     
+
 
 class MyEventsList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -53,13 +71,16 @@ class MyEventsList(generics.ListAPIView):
         user = self.request.user
         return Event.objects.filter(creator=user)
 
-    def post(self, request):
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(creator=request.user)  
-            return Response(serializer.data, status=201)  
-        return Response(serializer.errors, status=400) 
-    
+    serializer_class = EventSerializer
+
+
+class MyParticipationList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.participating_events.all()
+
     serializer_class = EventSerializer
 
 
@@ -68,21 +89,18 @@ class UserEventsList(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.request.query_params.get('user_id')
-        if user_id:
-            try:
-                user = User.objects.get(pk=user_id)
-                print(user)
-                filtered_events = Event.objects.filter(creator=user)
-                print(filtered_events) 
-                return filtered_events 
-               
-            except User.DoesNotExist:
-                return Event.objects.none()
-        else:
-            return Event.objects.none()
-    
+        if not user_id:
+            return Event.objects.none()  # Return empty queryset if no user_id provided
+
+        try:
+            user = User.objects.get(pk=user_id)
+            return Event.objects.filter(creator=user)
+        except User.DoesNotExist:
+            return Event.objects.none() 
+        
     serializer_class = EventSerializer
     
+
 class EventListByLocation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     #filter_backends = [filters.GeoDjangoFilter]
@@ -104,6 +122,7 @@ class EventListByLocation(generics.ListAPIView):
 
 class JoinEvent(APIView):
     permission_classes = [IsAuthenticated]
+    serializer = EventSerializer
 
     def post(self, request, pk):
         try:
@@ -120,7 +139,6 @@ class JoinEvent(APIView):
         event.participants.add(user)
         event.save()
 
-        serializer = EventSerializer(event)  # Optional for user data
         return Response({"message":"You successfully joined the event"}, serializer.data, status=201)
 
 
@@ -146,39 +164,5 @@ class LeaveEvent(APIView):
         event.save()
 
         return Response({"message": "You successfully left this event"},status=204) 
-
-class UpdateEvent(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"}, status=404)
-
-        # Check if user is authorized to update (creator)
-        if event.creator != request.user:
-            return Response({"message": "Only the creator can update event"}, status=403)
-
-        serializer = EventSerializer(event, data=request.data, partial=True) # allows updating specific fields without requiring all data.
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response({"message": "You successfully left this event"}, serializer.errors, status=400)
     
 
-class DeleteEvent(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"}, status=404)
-
-        # Check if user is authorized to delete (creator)
-        if event.creator != request.user:
-            return Response({"message": "Only the creator can delete event"}, status=403)
-
-        event.delete()
-        return Response({"message": "You successfully deleted this event"}, status=204)     
