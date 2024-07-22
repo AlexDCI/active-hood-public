@@ -24,32 +24,30 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="id_username" class="form-label">Username</label>
+                        <label for="id_username" class="form-label h5">Username</label>
                         {{ user_form.username }}
                     </div>
                     <div class="mb-3">
-                        <label for="id_email" class="form-label">Email</label>
+                        <label for="id_email" class="form-label h5">Email</label>
                         {{ user_form.email }}
-                        
-                     <div class="mb-3">
-                    <a href="{% url 'password_change' %}" class="btn btn-link mb-3">Change Password</a>
                     </div>
                     <div class="mb-3">
-                        <label for="id_avatar" class="form-label">Change Avatar</label>
+                        <a href="{% url 'password_change' %}" class="btn btn-link mb-3">Change Password</a>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_avatar" class="form-label h5">Change Avatar</label>
                         {{ profile_form.avatar }}
                     </div>
                     <div class="mb-3">
-                        <label for="id_bio" class="form-label">Bio</label>
+                        <label for="id_bio" class="form-label h5">Bio</label>
                         {{ profile_form.bio }}
                     </div>
                     <div class="mb-3">
-                        <label for="id_city" class="form-label">City</label>
+                        <label for="id_city" class="form-label h5">City</label>
                         {{ profile_form.city }}
-
                     </div>
 
-
-                    <h4 class="mt-4">Preferred Activities</h4>
+                    <h4 class="mt-4 mb-3">Preferred Activities</h4>
                     {{ formset.management_form }}
                     {% for form in formset %}
                     <div class="row mb-3">
@@ -67,29 +65,23 @@
                         </div>
                     </div>
                     {% endfor %}
-                    
-                                    <h4 class="mt-5">Current Preferred Activities</h4>
-                <ul class="list-group">
-                    {% for profile_activity in user.profile.profileactivity_set.all %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Activity: {{ profile_activity.activity.name }} - Level: {{ profile_activity.skill_level }}
-                        <form method="post" action="{% url 'delete-activity' profile_activity.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                        </form>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item">No preferred activities listed.</li>
-                    {% endfor %}
-                </ul>
+
+                    <h4 class="mt-5 mb-3">Current Preferred Activities</h4>
+                    <ul class="list-group">
+                        {% for profile_activity in user.profile.profileactivity_set.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Activity: {{ profile_activity.activity.name }} - Level: {{ profile_activity.skill_level }}
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item">No preferred activities listed.</li>
+                        {% endfor %}
+                    </ul>
 
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
                         <button type="reset" class="btn btn-secondary btn-lg">Reset</button>
                     </div>
                 </form>
-
-
             </div>
         </div>
     </div>
