@@ -2,14 +2,18 @@ from django.urls import path
 from . import api_views, views
 
 urlpatterns = [
-    path("", api_views.EventListByLocation.as_view(), name="api_events_home"), 
-    path("create/", api_views.CreateEvent.as_view(), name='api_events_create'),
-    path('<int:pk>/', api_views.EventDetail.as_view(), name='api_events_detail'),
-    path('myevents/', api_views.MyEventsList.as_view(), name='api_events_myevents'),
-    path('participating/', api_views.MyParticipationList.as_view(), name='api_events_participating'), 
-    path('user/<int:user_id>/', api_views.UserEventsList.as_view(), name='api_events_userevents'),
-    path('join/<int:pk>/', api_views.JoinEvent.as_view(), name='api_events_join'),
-    path('leave/<int:pk>/', api_views.LeaveEvent.as_view(), name='api_events_leave'),
+    path("api/", api_views.EventListByLocation.as_view(), name="api_events_home"), 
+    path("api/create/", api_views.CreateEvent.as_view(), name='api_create_event'),
+    path('api/<int:pk>/', api_views.EventDetail.as_view(), name='api_event_detail'),
+    path('api/myevents/', api_views.MyEventsList.as_view(), name='api_events_myevents'),
+    path('api/participating/', api_views.MyParticipationList.as_view(), name='api_events_participating'), 
+    path('api/user/<int:user_id>/', api_views.UserEventsList.as_view(), name='api_events_userevents'),
+    path('api/join/<int:pk>/', api_views.JoinEvent.as_view(), name='api_join_event'),
+    path('api/leave/<int:pk>/', api_views.LeaveEvent.as_view(), name='api_leave_event'),
     # regular views
-    #path('display/', views.display_event, name='display'),
+#    path("", views.events_list, name="events_home"), 
+    path("create/", views.create_event, name='create_event'),
+    path('<int:pk>/', views.event_detail, name='event_detail'),
+    path('join/<int:pk>/', views.join_event, name='join_event'),
+    path('leave/<int:pk>/', views.leave_event, name='leave_event'),
 ]
