@@ -11,6 +11,7 @@ from events.serializers import EventSerializer
 from django.contrib import messages
 
 
+
 class CreateEvent(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
