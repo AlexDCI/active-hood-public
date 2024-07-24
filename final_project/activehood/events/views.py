@@ -1,168 +1,59 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from users.models import User
-from rest_framework.views import APIView
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from events.models import Event
-from events.serializers import EventSerializer
-from django.contrib import messages
-
-# from rest_framework.filters import GeoDjangoFilter
-
-class CreateEvent(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(creator=request.user)  
-            return Response(serializer.data, status=201)  
-        return Response(serializer.errors, status=400) 
+import requests
+from django.http import HttpResponse
+from events.forms import EventForm
 
 
-class EventDetail(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get (self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"},status=404)  
-
-        serializer = EventSerializer(event)
-        return Response(serializer.data)
+def create_event(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            api_url = 'http://127.0.0.1:8000/api/create/'
+            event_data = form.cleaned_data
+            try:
+                response = requests.post(api_url, json=event_data)
+                response.raise_for_status()
+                return redirect('events_home')  
+            except requests.exceptions.RequestException as e:
+                return HttpResponse(f"An error occurred: {e}", status=500)
+    else:
+        form = EventForm()
     
-    def put(self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"}, status=404)
+    return render(request, 'create_event.html', {'form': form})
 
-        # Check if user is authorized to update (creator)
-        if event.creator != request.user:
-            return Response({"message": "Only the creator can update event"}, status=403)
 
-        serializer = EventSerializer(event, data=request.data, partial=True) # allows updating specific fields without requiring all data.
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response({"message": "You successfully updated this event"}, serializer.errors, status=400)
+def event_detail(request, pk):
+    api_url = f'http://127.0.0.1:8000/events/api/{pk}/'
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+        data = response.json()
+        context = {'event': data}
+    except requests.exceptions.RequestException as e:
+        return HttpResponse(f"An error occurred: {e}", status=500)
     
-    def delete(self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"}, status=404)
-
-        # Check if user is authorized to delete (creator)
-        if event.creator != request.user:
-            return Response({"message": "Only the creator can delete event"}, status=403)
-
-        event.delete()
-        return Response({"message": "You successfully deleted this event"}, status=204)     
+    return render(request, 'event_detail.html', context)
 
 
-class MyEventsList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+def join_event(request, pk):
+    api_url = f'http://127.0.0.1:8000/events/api/join/{pk}/'
+    headers = {'Authorization': f'Bearer {request.session["auth_token"]}'}
 
-    def get_queryset(self):
-        user = self.request.user
-        return Event.objects.filter(creator=user)
-
-    serializer_class = EventSerializer
-
-
-class MyParticipationList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return user.participating_events.all()
-
-    serializer_class = EventSerializer
-
-
-class UserEventsList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user_id = self.request.query_params.get('user_id')
-        if not user_id:
-            return Event.objects.none()  # Return empty queryset if no user_id provided
-
-        try:
-            user = User.objects.get(pk=user_id)
-            return Event.objects.filter(creator=user)
-        except User.DoesNotExist:
-            return Event.objects.none() 
-        
-    serializer_class = EventSerializer
+    try:
+        response = requests.post(api_url, headers=headers)
+        response.raise_for_status()
+        return redirect('event_detail', pk=pk)
+    except requests.exceptions.RequestException as e:
+        return HttpResponse(f"An error occurred: {e}", status=500)
     
 
-class EventListByLocation(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    #filter_backends = [filters.GeoDjangoFilter]
-    #geo_field = 'location'  # Assuming 'location' field stores geospatial data
+def leave_event(request, pk):
+    api_url = f'http://127.0.0.1:8000/api/leave/{pk}/'
+    headers = {'Authorization': f'Bearer {request.session["auth_token"]}'}
 
-    def get_queryset(self):
-        user_latitude = self.request.query_params.get('latitude')
-        user_longitude = self.request.query_params.get('longitude')
-        # Implement logic to filter based on user location (e.g., radius)
-        # This is a placeholder, replace with your location filtering logic
-        if user_latitude and user_longitude:
-            # ... filter based on user coordinates and radius
-            return Event.objects.all()  # Replace with filtered queryset
-        else:
-            return Event.objects.none()  # Return empty queryset if no location provided
-
-    serializer_class = EventSerializer
-
-
-class JoinEvent(APIView):
-    permission_classes = [IsAuthenticated]
-    serializer = EventSerializer
-
-    def post(self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"},status=404)
-
-        user = request.user
-
-        # Check if user is already participating
-        if user in event.participants.all():
-            return Response({"message": "You are already joined to this event"}, status=400)
-
-        event.participants.add(user)
-        event.save()
-
-        return Response({"message":"You successfully joined the event"}, serializer.data, status=201)
-
-
-class LeaveEvent(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request, pk):
-        try:
-            event = Event.objects.get(pk=pk)
-        except Event.DoesNotExist:
-            return Response({"message": "This event does not exist"}, status=404)
-
-        user = request.user
-
-        # Check if user is participating
-        if user not in event.participants.all():
-            return Response({"message": "You are not currently joined to this event"}, status=400)
-
-        if user == event.creator:
-            return Response({"message": "You are the owner of this event and can not leave"}, status=400)
-        
-        event.participants.remove(user)
-        event.save()
-
-        return Response({"message": "You successfully left this event"},status=204) 
-    
-
+    try:
+        response = requests.post(api_url, headers=headers)
+        response.raise_for_status()
+        return redirect('event_detail', pk=pk)
+    except requests.exceptions.RequestException as e:
+        return HttpResponse(f"An error occurred: {e}", status=500)

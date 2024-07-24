@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # installed
     "rest_framework",
+    'rest_framework_simplejwt',
     "social_django",  # to log in with social media account
     "corsheaders",
     # custom
