@@ -2,7 +2,8 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Events I joined</h2>
+    <h1>Events I joined</h1>
+    <br> 
     <ul>
     {% for event in events %}
         <li><a href="{% url 'event_detail' event.pk %}">{{ event.activity }} on {{ event.date }}</a></li>
