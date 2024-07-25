@@ -6,8 +6,11 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from events.models import Event
 from events.serializers import EventSerializer
+
 from django.contrib import messages
 
 
@@ -186,3 +189,11 @@ class LeaveEvent(APIView):
 
         return Response({"message": "You successfully left this event"},status=204) 
     
+
+class TokenObtainPairView(TokenObtainPairView):
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        refresh = RefreshToken.for_user(request.user)
+        response.set_cookie('refresh_token', str(refresh), httponly=True)
+        return response
