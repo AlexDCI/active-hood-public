@@ -94,12 +94,14 @@ class UserEventsList(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.request.query_params.get('user_id')
         if not user_id:
+            print('not user')
             return Event.objects.none()  # Return empty queryset if no user_id provided
 
         try:
             user = User.objects.get(pk=user_id)
             return Event.objects.filter(creator=user)
         except User.DoesNotExist:
+            print('user does not exist')
             return Event.objects.none() 
         
     serializer_class = EventSerializer
@@ -142,7 +144,6 @@ class JoinEvent(APIView):
     serializer = EventSerializer
 
     def post(self, request, pk):
-        serializer = EventSerializer
 
         try:
             event = Event.objects.get(pk=pk)
@@ -158,7 +159,7 @@ class JoinEvent(APIView):
         event.participants.add(user)
         event.save()
 
-        return Response({"message":"You successfully joined the event"}, serializer.data, status=201)
+        return Response({"message":"You successfully joined the event"}, status=201)
 
 
 class LeaveEvent(APIView):
