@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Events</h1>
+    <form method="get">
+        <div class="form-group">
+            <label for="location">Filter by location:</label>
+            <select name="location" id="location" class="form-control">
+                <option value="">All Locations</option>
+                {% for location in locations %}
+                    <option value="{{ location.name }}" {% if request.GET.location == location.name %}selected{% endif %}>
+                        {{ location.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="activity">Filter by activity:</label>
+            <select name="activity" id="activity" class="form-control">
+                <option value="">All Activities</option>
+                {% for activity in activities %}
+                    <option value="{{ activity.name }}" {% if request.GET.activity == activity.name %}selected{% endif %}>
+                        {{ activity.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+    <hr>
+    <div class="events-list">
+        {% for event in events %}
+        <div class="event-item">
+            <h3>{{ event.name }}</h3> 
+            <p>{{ event.description }}</p>
+            <p>Date: {{ event.date }}</p>
+            {% if event.time %}
+                <p>Time: {{ event.time }}</p>
+            {% endif %}
+            <!-- Check if location is a ForeignKey and has a 'name' attribute -->
+            {% if event.location %}
+                <p>Location: {{ event.location.name }}</p>
+            {% else %}
+                <p>Location: Not specified</p>
+            {% endif %}
+            <a href="{% url 'event_detail' event.pk %}" class="btn btn-info">View Details</a>
+        </div>
+        <hr>
+        {% empty %}
+        <p>No events found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
