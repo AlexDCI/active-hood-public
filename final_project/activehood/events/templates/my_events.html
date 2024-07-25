@@ -8,5 +8,11 @@
         <li><a href="{% url 'event_detail' event.pk %}">{{ event.activity }} on {{ event.date }}</a></li>
     {% endfor %}
     </ul>
+    <div class="mt-4">
+        <a href="{% url 'events_list' %}" class="btn btn-secondary">All events</a>
+        <a href="{% url 'events_list' %}?location={{ user_city }}" class="btn btn-secondary">Events in my city</a>
+        <a href="{% url 'events_participating' %}" class="btn btn-secondary">Events I joined</a>
+        <a href="{% url 'create_event' %}" class="btn btn-secondary">Create event</a>
+    </div>
 </div>
 {% endblock %}
