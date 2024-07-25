@@ -12,13 +12,13 @@ from locations.models import City
 @login_required
 def events_list(request):
     user = request.user
-    # location = user.profile.city  # Default to user's city
+    location = user.profile.city  # Default to user's city
+    in_my_city = Event.objects.filter(location=location)
 
     # Get location and activity filters from query parameters
     location_param = request.GET.get('location', None)
     activity_param = request.GET.get('activity', None)
-    print(request.GET)
-    print(activity_param)
+    
     queryset = Event.objects.all()
 
     # if location:
@@ -37,6 +37,7 @@ def events_list(request):
 
     return render(request, 'events_list.html', {
         'events': queryset,
+        'city_filter': in_my_city,
         'activities': activities,
         'locations': locations,
     })
