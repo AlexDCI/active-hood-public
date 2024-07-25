@@ -7,6 +7,10 @@ class FriendRequest(models.Model):
     to_user = models.ForeignKey(User, related_name='received_friend_requests', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.from_user.username} to {self.to_user.username}"
+
+    class Meta:
+        unique_together = ('from_user', 'to_user')
+
+    # def __str__(self):
+    #     return f"{self.from_user.username} to {self.to_user.username}"
 

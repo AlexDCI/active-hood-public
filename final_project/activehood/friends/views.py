@@ -1,8 +1,11 @@
 # friends/views.py
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from .models import FriendRequest
+from friends.models import FriendRequest
+from friends.forms import SearchUserForm
+from users.models import Profile, City
 
 @login_required
 def user_all_list(request):
@@ -29,11 +32,17 @@ def user_profile(request, username):
     user = get_object_or_404(User, username=username)
     return render(request, 'friends/user_profile.html', {'user': user})
 
+# @login_required
+# def send_friend_request(request, user_id):
+#     to_user = get_object_or_404(User, id=user_id)
+#     friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+#     return redirect('user_list')
 @login_required
 def send_friend_request(request, user_id):
     to_user = get_object_or_404(User, id=user_id)
-    friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
-    return redirect('user_list')
+    if request.user != to_user:
+        friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+    return redirect('friends:search_users')
 
 @login_required
 def view_friend_requests(request):
@@ -65,4 +74,25 @@ def accept_friend_request(request, request_id):
         request.user.profile.friends.add(friend_request.from_user.profile)
         friend_request.from_user.profile.friends.add(request.user.profile)
         friend_request.delete()
-    return redirect('friend_requests')
+    return redirect('friends:friend_requests')
+
+
+User = get_user_model()
+
+@login_required
+def search_users(request):
+    if request.method == 'POST':
+        form = SearchUserForm(request.POST)
+        if form.is_valid():
+            city = form.cleaned_data['city']
+            users = User.objects.filter(profile__city=city).exclude(id=request.user.id)
+            return render(request, 'friends/search_results.html', {'users': users, 'form': form})
+    else:
+        form = SearchUserForm()
+    return render(request, 'friends/search.html', {'form': form})
+
+@login_required
+def add_friend(request, user_id):
+    user_to_add = get_object_or_404(User, id=user_id)
+    request.user.profile.friends.add(user_to_add.profile)
+    return redirect('friends:search_users')
