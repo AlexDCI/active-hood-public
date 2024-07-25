@@ -16,7 +16,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name= 'token refresh'),
 
     # regular views
-    path("", views.events_list, name="events_home"), 
+    path("", views.events_list, name="events_list"), 
     path("create/", views.create_event, name='create_event'),
     path('<int:pk>/', views.event_detail, name='event_detail'),
     path('join/<int:pk>/', views.join_event, name='join_event'),
