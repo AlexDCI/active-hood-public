@@ -31,13 +31,13 @@
     </form>
     <hr>
     <div class="mt-4">
-        <a href="{% url 'events_list' %}?location={{ user_city }}" class="btn btn-secondary">Events in my city</a>
+        <a href="#" class="btn btn-secondary">Events in my city</a>
         <a href="{% url 'events_myevents' %}" class="btn btn-secondary">My events</a>
         <a href="{% url 'events_participating' %}" class="btn btn-secondary">Events I joined</a>
         <a href="{% url 'create_event' %}" class="btn btn-secondary">Create event</a>
 
     </div>
-    
+    <br> 
     <div class="events-list">
         {% for event in events %}
         <div class="event-item">

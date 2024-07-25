@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
+    #API 
     path("api/", api_views.EventListByLocation.as_view(), name="api_events_home"), 
     path("api/create/", api_views.CreateEvent.as_view(), name='api_create_event'),
     path('api/<int:pk>/', api_views.EventDetail.as_view(), name='api_event_detail'),
@@ -15,12 +16,13 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name = 'Token obtain pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name= 'token refresh'),
 
-    # regular views
+    # regular
     path("", views.events_list, name="events_list"), 
     path("create/", views.create_event, name='create_event'),
     path('<int:pk>/', views.event_detail, name='event_detail'),
     path('join/<int:pk>/', views.join_event, name='join_event'),
     path('leave/<int:pk>/', views.leave_event, name='leave_event'),
+    path('delete/<int:pk>/', views.delete_event, name='delete_event'),
     path('myevents/', views.my_events, name='events_myevents'),
     path('participating/', views.participating, name='events_participating'), 
     path('user/<int:user_id>/', views.user_events, name='events_userevents'),
