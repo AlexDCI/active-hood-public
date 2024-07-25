@@ -52,7 +52,7 @@ def create_event(request):
             event.creator = request.user
             event.save()
             messages.success(request, 'Event created successfully.')
-            return redirect('events_home')
+            return redirect('events_myevents')
     else:
         form = EventForm()
     return render(request, 'create_event.html', {'form': form})
@@ -63,10 +63,13 @@ def event_detail(request, pk):
     event = get_object_or_404(Event, pk=pk)
     user_is_creator = event.creator == request.user
     user_is_participant = request.user in event.participants.all()
+    user_city = request.user.profile.city 
+
     context = {
         'event': event,
         'user_is_creator': user_is_creator,
         'user_is_participant': user_is_participant,
+        'user_city': user_city,
     }
 
     return render(request, 'event_detail.html', context)

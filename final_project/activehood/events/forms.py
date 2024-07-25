@@ -11,3 +11,8 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['activity', 'description', 'date', 'time', 'location']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['time'].widget = forms.TimeInput(attrs={'type': 'time'})

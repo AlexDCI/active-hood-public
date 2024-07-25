@@ -8,7 +8,7 @@
         <div class="form-group">
             <label for="location">Filter by location:</label>
             <select name="location" id="location" class="form-control">
-                <option value="">All Locations</option>
+                <option value="">All locations</option>
                 {% for location in locations %}
                     <option value="{{ location.name }}" {% if request.GET.location == location.name %}selected{% endif %}>
                         {{ location.name }}
@@ -19,7 +19,7 @@
         <div class="form-group">
             <label for="activity">Filter by activity:</label>
             <select name="activity" id="activity" class="form-control">
-                <option value="">All Activities</option>
+                <option value="">All activities</option>
                 {% for activity in activities %}
                     <option value="{{ activity.name }}" {% if request.GET.activity == activity.name %}selected{% endif %}>
                         {{ activity.name }}
@@ -30,13 +30,14 @@
         <button type="submit" class="btn btn-primary">Filter</button>
     </form>
     <hr>
+    <div class="mt-4">
+        <a href="{% url 'events_list' %}?location={{ user_city }}" class="btn btn-secondary">Events in my city</a>
+        <a href="{% url 'events_myevents' %}" class="btn btn-secondary">My events</a>
+        <a href="{% url 'events_participating' %}" class="btn btn-secondary">Events I joined</a>
+        <a href="{% url 'create_event' %}" class="btn btn-secondary">Create event</a>
 
-    <!-- Button to filter events by user's city -->
-    <form method="get" action="{% url 'events_list' %}" class="mb-3">
-        <input type="hidden" name="location" value="{{ user.profile.city.name }}">
-        <button type="submit" class="btn btn-secondary">Show events in my city</button>
-    </form>
-
+    </div>
+    
     <div class="events-list">
         {% for event in events %}
         <div class="event-item">
