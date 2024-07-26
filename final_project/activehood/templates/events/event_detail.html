@@ -7,8 +7,8 @@
         <div class="card-header text-center">
             <h3 class="font-weight-light my-1">Event Details</h3>
         </div>
-        <div class="card-body">
-            <div class="event-info mb-4">
+        <div class="card-body d-flex align-items-center">
+            <div class="event-info flex-grow-1">
                 <p><strong>Event:</strong> {{ event.activity.name }}</p>
                 <p><strong>Description:</strong> {{ event.description }}</p>
                 <p><strong>Date:</strong> {{ event.date }}</p>
@@ -20,6 +20,8 @@
                 {% else %}
                     <p><strong>Location:</strong> Not specified</p>
                 {% endif %}
+            </div>
+            <div class="ml-3">
                 {% if not user_is_creator %}
                     {% if user in event.participants.all %}
                         <a href="{% url 'leave_event' event.pk %}" class="btn btn-danger btn-sm">Leave Event</a>
@@ -179,6 +181,22 @@
   
   .creator-info-box {
     font-size: 14px; /* Smaller font size for activities */
+  }
+
+  .d-flex {
+    display: flex;
+  }
+
+  .align-items-center {
+    align-items: center;
+  }
+
+  .ml-3 {
+    margin-left: 1rem; /* Space between event info and button */
+  }
+
+  .flex-grow-1 {
+    flex-grow: 1;
   }
 </style>
 
