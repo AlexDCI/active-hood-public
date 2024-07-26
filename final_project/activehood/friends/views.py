@@ -23,10 +23,10 @@ from users.models import Profile, City
 #         'friends': friends
 #     })
 
-# @login_required
-# def user_profile(request, username):
-#     user = get_object_or_404(User, username=username)
-#     return render(request, 'friends/user_profile.html', {'user': user})
+@login_required
+def user_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    return render(request, 'friends/user_profile.html', {'user': user})
 
 
 @login_required

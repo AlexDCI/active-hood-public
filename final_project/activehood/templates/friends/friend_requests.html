@@ -53,6 +53,9 @@
       {% for friend_request in new_requests %}
           <li>
               {{ friend_request.from_user.username }}
+              <a href="{% url 'friends:user_profile' friend_request.from_user.username %}">
+                <button type="button">View Profile</button>
+              </a>
               <form method="post" action="{% url 'friends:accept_friend_request' friend_request.id %}">
                   {% csrf_token %}
                   <button type="submit">Accept</button>
@@ -68,6 +71,9 @@
       {% for friend in friends_list %}
           <li>
               {{ friend.user.username }}
+              <a href="{% url 'friends:user_profile' friend.user.username %}">
+                <button type="button">View Profile</button>
+              </a>
           </li>
       {% empty %}
           <li>You have no friends.</li>
