@@ -114,11 +114,12 @@
 
     <!-- Bottom Buttons Section -->
     <div class="text-center mt-3">
+        <a href="{% url 'events_list' %}" class="btn btn-outline-secondary btn-sm mx-1">All events</a>
         <a href="{% url 'events_list' %}?location={{ user.profile.city }}" class="btn btn-outline-secondary btn-sm mx-1">Events in my city</a>
         <a href="{% url 'events_myevents' %}" class="btn btn-outline-secondary btn-sm mx-1">My events</a>
         <a href="{% url 'events_participating' %}" class="btn btn-outline-secondary btn-sm mx-1">Events I joined</a>
         <a href="{% url 'create_event' %}" class="btn btn-outline-secondary btn-sm mx-1">Create event</a>
-        <a href="{% url 'events_list' %}" class="btn btn-outline-secondary btn-sm mx-1">Back to All Events</a>
+
     </div>
 </div>
 {% endblock %}
