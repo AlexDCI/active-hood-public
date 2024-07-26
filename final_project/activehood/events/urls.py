@@ -1,6 +1,8 @@
 from django.urls import path
 from . import api_views, views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -27,3 +29,7 @@ urlpatterns = [
     path('participating/', views.participating, name='events_participating'), 
     path('user/<int:user_id>/', views.user_events, name='events_userevents'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
