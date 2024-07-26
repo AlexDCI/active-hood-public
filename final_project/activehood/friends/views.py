@@ -7,36 +7,28 @@ from friends.models import FriendRequest
 from friends.forms import SearchUserForm
 from users.models import Profile, City
 
-@login_required
-def user_all_list(request):
-    users = User.objects.exclude(id=request.user.id)
-    return render(request, 'friends/members.html', {'users': users})
+# @login_required
+# def user_all_list(request):
+#     users = User.objects.exclude(id=request.user.id)
+#     return render(request, 'friends/members.html', {'users': users})
 
-@login_required
-def user_list(request):
-    users = User.objects.exclude(id=request.user.id)
-    friend_requests_sent = FriendRequest.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
-    friends = request.user.profile.friends.all()
-    return render(request, 'friends/user_list.html', {
-        'users': users,
-        'friend_requests_sent': friend_requests_sent,
-        'friends': friends
-    })
+# @login_required
 # def user_list(request):
 #     users = User.objects.exclude(id=request.user.id)
 #     friend_requests_sent = FriendRequest.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
-#     return render(request, 'friends/user_list.html', {'users': users, 'friend_requests_sent': friend_requests_sent})
-
-@login_required
-def user_profile(request, username):
-    user = get_object_or_404(User, username=username)
-    return render(request, 'friends/user_profile.html', {'user': user})
+#     friends = request.user.profile.friends.all()
+#     return render(request, 'friends/user_list.html', {
+#         'users': users,
+#         'friend_requests_sent': friend_requests_sent,
+#         'friends': friends
+#     })
 
 # @login_required
-# def send_friend_request(request, user_id):
-#     to_user = get_object_or_404(User, id=user_id)
-#     friend_request, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
-#     return redirect('user_list')
+# def user_profile(request, username):
+#     user = get_object_or_404(User, username=username)
+#     return render(request, 'friends/user_profile.html', {'user': user})
+
+
 @login_required
 def send_friend_request(request, user_id):
     to_user = get_object_or_404(User, id=user_id)
