@@ -1,12 +1,12 @@
 from django.urls import path
-from friends.views import  view_friend_requests, send_friend_request, accept_friend_request, search_users, add_friend
+from friends.views import  view_friend_requests, send_friend_request, accept_friend_request, search_users, add_friend, user_profile
 
 
 app_name = 'friends'
 
 urlpatterns = [
     # path('members/', user_all_list, name='user_list'),
-    # path('profile/<str:username>/', user_profile, name='user_profile'),
+    path('profile/<str:username>/', user_profile, name='user_profile'),
     # path('users/', user_list, name='user_list'),
     path('send_friend_request/<int:user_id>/', send_friend_request, name='send_friend_request'),
     path('friend_requests/', view_friend_requests, name='friend_requests'),
