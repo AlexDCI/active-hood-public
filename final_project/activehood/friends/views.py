@@ -23,10 +23,16 @@ from users.models import Profile, City
 #         'friends': friends
 #     })
 
+# @login_required
+# def user_profile(request, username):
+#     user = get_object_or_404(User, username=username)
+#     return render(request, 'friends/user_profile.html', {'user': user})
+
 @login_required
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
-    return render(request, 'friends/user_profile.html', {'user': user})
+    is_friend = user.profile in request.user.profile.friends.all()
+    return render(request, 'friends/user_profile.html', {'user': user, 'is_friend': is_friend})
 
 
 @login_required
@@ -88,3 +94,12 @@ def add_friend(request, user_id):
     user_to_add = get_object_or_404(User, id=user_id)
     request.user.profile.friends.add(user_to_add.profile)
     return redirect('friends:search_users')
+
+
+@login_required
+def remove_friend(request, user_id):
+    user_to_remove = get_object_or_404(User, id=user_id)
+    if request.user.profile.friends.filter(user=user_to_remove).exists():
+        request.user.profile.friends.remove(user_to_remove.profile)
+        user_to_remove.profile.friends.remove(request.user.profile)
+    return redirect('friends:user_profile', username=user_to_remove.username)
