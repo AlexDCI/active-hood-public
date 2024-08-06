@@ -1,21 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Profile Page{% endblock title %}
+{% block title %}{{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
+<style>
+    .user-profile {
+        width: 60%;
+        margin: 20px auto;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .user-profile h1 {
+        text-align: center;
+        color: #343a40;
+    }
+    .user-profile p {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.5;
+    }
+    .user-profile .btn-danger {
+        display: block;
+        width: 100%;
+        background-color: #dc3545;
+        border: none;
+        padding: 10px;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+        text-align: center;
+        text-decoration: none;
+    }
+    .user-profile .btn-danger:hover {
+        background-color: #c82333;
+    }
+</style>
 
-<body>
+<div class="user-profile">
     <h1>{{ user.username }}'s Profile</h1>
-    <p>Email: {{ user.email }}</p>
-    <p>First Name: {{ user.first_name }}</p>
-    <p>Last Name: {{ user.last_name }}</p>
-    <p>Bio: {{ user.profile.bio }}</p>
-    <p>City: {{ user.profile.city }}</p>
-</body>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>First Name:</strong> {{ user.first_name }}</p>
+    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+    <p><strong>Bio:</strong> {{ user.profile.bio }}</p>
+    <p><strong>City:</strong> {{ user.profile.city }}</p>
 
-{% endblock content %}
-
-
-
-
-
+    {% if is_friend %}
+    <form method="post" action="{% url 'friends:remove_friend' user.id %}" class="remove-friend-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Remove Friend</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
