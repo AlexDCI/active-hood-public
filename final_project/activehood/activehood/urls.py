@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("users.urls")),
     path("events/", include("events.urls")),
     path("friends/", include("friends.urls")),
+    path("messenger/", include("messenger.urls")),
 ]
 
 if settings.DEBUG:

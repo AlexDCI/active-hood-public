@@ -74,6 +74,9 @@
               <a href="{% url 'friends:user_profile' friend.user.username %}">
                 <button type="button">View Profile</button>
               </a>
+              <a href="{% url 'messenger:chat_room' friend.user.username %}">
+                <button type="button">Send Message</button>
+              </a>
           </li>
       {% empty %}
           <li>You have no friends.</li>
