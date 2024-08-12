@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "events",
     "locations",
     "friends",
+    'channels',
+    'messenger',
 ]
 
 
@@ -199,3 +201,15 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# setting channels layer
+ASGI_APPLICATION = 'activehood.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
