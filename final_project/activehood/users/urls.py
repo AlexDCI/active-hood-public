@@ -5,7 +5,7 @@ from django.urls import path, include, re_path
 from users.views import ResetPasswordView
 from django.conf import settings
 from django.conf.urls.static import static
-from users.views import ChangePasswordView, add_activity, update_activity,  delete_activity
+from users.views import ChangePasswordView, add_activity, update_activity,  delete_activity, send_invitation
 
 
 urlpatterns = [
@@ -42,6 +42,7 @@ urlpatterns = [
 
     path('profile/', profile, name='users-profile'),
     path('password-change/', ChangePasswordView.as_view(), name='password_change'),
+    path('send-invitation/', send_invitation, name='send_invitation'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
