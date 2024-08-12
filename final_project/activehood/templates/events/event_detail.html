@@ -28,6 +28,11 @@
                     {% else %}
                         <a href="{% url 'join_event' event.pk %}" class="btn btn-info btn-sm">Join Event</a>
                     {% endif %}
+                {% else %}
+                    <form method="post" action="{% url 'delete_event' event.pk %}" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete Event</button>
+                    </form>
                 {% endif %}
             </div>
         </div>
@@ -48,8 +53,11 @@
                     </div>
                     <p class="mb-1">City: {{ event.creator.profile.city }}</p>
                     <p class="mb-1">Member Since: {{ event.creator.profile.user.date_joined|date:"F j, Y" }}</p>
-                    {% if event.creator.email %}
+                    {% if event.creator.email and not event.creator.profile.hide_email %}
                         <p class="mb-1">Email: <a href="mailto:{{ event.creator.email }}">{{ event.creator.email }}</a></p>
+                    {% endif %}
+                    {% if event.creator.profile.telephone and not event.creator.profile.hide_telephone %}
+                        <p class="mb-1">Telephone: {{ event.creator.profile.telephone }}</p>
                     {% endif %}
                 </div>
                 <!-- User Information Box -->
@@ -73,44 +81,40 @@
         </div>
     </div>
 
-    <!-- Participants Information Box -->
+    <!-- Participants Information Boxes -->
+    {% if event.participants.all %}
     <div class="card shadow-lg border-0 rounded-lg mx-auto mt-4" style="max-width: 800px;">
         <div class="card-header text-center">
             <h4 class="font-weight-light my-1">Participants</h4>
         </div>
         <div class="card-body">
-            {% if event.participants.all %}
             <div class="row">
                 {% for participant in event.participants.all %}
-                <div class="col-md-4 text-center mb-3">
-                    <img class="rounded-circle account-img" src="{{ participant.profile.avatar.url }}" alt="{{ participant.first_name }} {{ participant.last_name }}" style="width: 100px; height: 100px; object-fit: cover;">
-                    <div class="participant-name-frame mt-2">
-                        <h5 class="mb-0">{{ participant.first_name }} {{ participant.last_name }}</h5>
-                    </div>
-                    <p class="mb-1">City: {{ participant.profile.city }}</p>
-                    <p class="mb-1">Member Since: {{ participant.profile.user.date_joined|date:"F j, Y" }}</p>
-                    <ul class="list-group mt-2">
-                        {% for activity in participant.profile.profileactivity_set.all %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div style="flex: 1;">
-                                <strong>{{ activity.activity.name }}</strong>
-                                <div>Level: {{ activity.skill_level }}</div>
+                <div class="col-md-4 mb-4">
+                    <div class="participant-info-box">
+                        <div class="text-center">
+                            <img class="rounded-circle account-img" src="{{ participant.profile.avatar.url }}" alt="{{ participant.first_name }} {{ participant.last_name }}" style="width: 150px; height: 150px; object-fit: cover;">
+                            <div class="participant-name-frame mt-3">
+                                <h5 class="mb-0">{{ participant.first_name }} {{ participant.last_name }}</h5>
                             </div>
-                        </li>
-                        {% empty %}
-                        <li class="list-group-item">No activities listed.</li>
-                        {% endfor %}
-                    </ul>
+                            <p class="mb-1">City: {{ participant.profile.city }}</p>
+                            <p class="mb-1">Member Since: {{ participant.profile.user.date_joined|date:"F j, Y" }}</p>
+                            {% if participant.email and not participant.profile.hide_email %}
+                                <p class="mb-1">Email: <a href="mailto:{{ participant.email }}">{{ participant.email }}</a></p>
+                            {% endif %}
+                            {% if participant.profile.telephone and not participant.profile.hide_telephone %}
+                                <p class="mb-1">Telephone: {{ participant.profile.telephone }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
                 {% empty %}
-                <p>No participants have joined this event yet.</p>
+                <p class="text-center">No participants yet.</p>
                 {% endfor %}
             </div>
-            {% else %}
-            <p>No participants have joined this event yet.</p>
-            {% endif %}
         </div>
     </div>
+    {% endif %}
 
     <!-- Bottom Buttons Section -->
     <div class="text-center mt-3">
@@ -119,7 +123,6 @@
         <a href="{% url 'events_myevents' %}" class="btn btn-outline-secondary btn-sm mx-1">My events</a>
         <a href="{% url 'events_participating' %}" class="btn btn-outline-secondary btn-sm mx-1">Events I joined</a>
         <a href="{% url 'create_event' %}" class="btn btn-outline-secondary btn-sm mx-1">Create event</a>
-
     </div>
 </div>
 {% endblock %}
@@ -176,28 +179,16 @@
 
   .creator-name-frame h4,
   .participant-name-frame h5 {
-    margin-bottom: 0; /* Remove bottom margin for the heading */
-    color: #00796b; /* Darker teal text color */
-  }
-  
-  .creator-info-box {
-    font-size: 14px; /* Smaller font size for activities */
+    margin-bottom: 0;
   }
 
-  .d-flex {
-    display: flex;
-  }
-
-  .align-items-center {
-    align-items: center;
-  }
-
-  .ml-3 {
-    margin-left: 1rem; /* Space between event info and button */
-  }
-
-  .flex-grow-1 {
-    flex-grow: 1;
+  .participant-info-box {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #ffffff; /* Background color for contrast */
+    margin: 0 auto;
   }
 </style>
 

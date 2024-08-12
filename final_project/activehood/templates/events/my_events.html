@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="container mt-5">
     <div class="card shadow-lg border-0 rounded-lg">
         <div class="card-header text-center">
@@ -29,8 +30,14 @@
                                     <p><strong>Created by:</strong> {{ event.creator.first_name }} {{ event.creator.last_name }}</p>
                                 </div>
                             </div>
-                            <div class="text-left mt-2">
-                                <a href="{% url 'event_detail' event.pk %}" class="btn btn-info btn-sm">View Details</a>
+                            <div class="text-left mt-2 d-flex">
+                                <a href="{% url 'event_detail' event.pk %}" class="btn btn-info btn-sm mr-2">View Details</a>
+                                {% if request.user == event.creator %}
+                                <form method="post" action="{% url 'delete_event' event.pk %}" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

@@ -159,17 +159,26 @@ class UpdateUserForm(forms.ModelForm):
 class UpdateProfileForm(forms.ModelForm):
     avatar = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
     bio = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}))
+    city = forms.ModelChoiceField(queryset=City.objects.all(), required=False, widget=forms.Select(attrs={'class': 'form-control'}))
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}), required=False)
+    telephone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+    hide_email = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False)
+    hide_telephone = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False)
 
     class Meta:
         model = Profile
-        fields = ['avatar', 'bio', 'city']
-    city = forms.ModelChoiceField(queryset=City.objects.all(), required=False)
+        fields = ['avatar', 'bio', 'city', 'date_of_birth', 'telephone', 'hide_email', 'hide_telephone']
+
 
 
 class ProfileActivityForm(forms.ModelForm):
     class Meta:
         model = ProfileActivity
         fields = ['activity', 'skill_level']
+        widgets = {
+            'activity': forms.Select(attrs={'class': 'form-control'}),
+            'skill_level': forms.Select(attrs={'class': 'form-control'}),
+        }
     
     def __init__(self, *args, **kwargs):
         profile = kwargs.pop('profile', None)  # Get the profile instance, default to None

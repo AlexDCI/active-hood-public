@@ -5,7 +5,7 @@ from users.models import Activity
 
 class Event(models.Model):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    description = models.TextField()
+    description = models.TextField(default="Describe your event")
     date = models.DateField()
     time = models.TimeField(null=True)
     location = models.ForeignKey(City, on_delete=models.CASCADE, null=True)

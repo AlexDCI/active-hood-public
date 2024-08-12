@@ -30,16 +30,17 @@ class ProfileActivity(models.Model):
 # Extending User Model Using a One-To-One Link
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
     avatar = models.ImageField(upload_to='profile_images/', default='profile_images/default.png')
     bio = models.TextField()
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    telephone = models.CharField(max_length=15, blank=True)
+    hide_email = models.BooleanField(default=False)
+    hide_telephone = models.BooleanField(default=False)
     friends = models.ManyToManyField("self", symmetrical=True, blank=True)
     groups = models.ManyToManyField(Group, related_name="custom_user_set", blank=True)
-    user_permissions = models.ManyToManyField(
-         Permission, related_name="custom_user_set", blank=True
-         )
-    
+    user_permissions = models.ManyToManyField(Permission, related_name="custom_user_set", blank=True)
+
     def __str__(self):
         return self.user.username
 
@@ -49,29 +50,22 @@ class Profile(models.Model):
             
             img = Image.open(self.avatar.path)
 
-            # Resize only if image is larger than 100x100 pixels
             if img.height > 100 or img.width > 100:
                 new_img_size = (100, 100)
                 img.thumbnail(new_img_size, Image.ANTIALIAS)
                 img.save(self.avatar.path)
 
         except UnidentifiedImageError:
-            # Handle the case where the image file cannot be identified
-            # Log the error or use a default image instead
             default_image_path = os.path.join(settings.MEDIA_ROOT, 'default.jpg')
             img = Image.open(default_image_path)
             img.save(self.avatar.path)
         
         except IntegrityError as e:
-            # Handle the IntegrityError, which occurs when the email is not unique
             print(f"IntegrityError: {e}")
-            # Here you can add custom logic to notify the user or handle the error
             raise
 
         except Exception as e:
-            # Handle other exceptions if necessary
             print(f"Error saving profile image: {e}")
-        
-        
+
 
 

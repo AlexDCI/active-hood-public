@@ -23,9 +23,7 @@
       <div class="row">
         <div class="col-md-4 text-center">
           <img class="rounded-circle account-img" src="{{ user.profile.avatar.url }}" style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;">
-          <h4 class="mt-4" style="font-size: 18px;">
-            {{ user.profile.user.first_name }} {{ user.profile.user.last_name }}
-          </h4>
+
           <p>City: {{ user.profile.city }}</p>
           <ul class="list-group">
             {% for profile_activity in user.profile.profileactivity_set.all %}
@@ -74,6 +72,22 @@
               <label for="id_email" class="form-label custom-label">Email</label>
               {{ user_form.email }}
             </div>
+            <div class="form-check mb-4">
+              {{ profile_form.hide_email }}
+              <label for="id_hide_email" class="form-check-label">Hide Email</label>
+            </div>
+            <div class="form-group mb-4">
+              <label for="id_telephone" class="form-label custom-label">Telephone</label>
+              {{ profile_form.telephone }}
+            </div>
+            <div class="form-check mb-4">
+              {{ profile_form.hide_telephone }}
+              <label for="id_hide_telephone" class="form-check-label">Hide Telephone</label>
+            </div>
+            <div class="form-group mb-4">
+              <label for="id_date_of_birth" class="form-label custom-label">Date of Birth</label>
+              {{ profile_form.date_of_birth }}
+            </div>
             <div class="form-group mb-4">
               <a href="{% url 'password_change' %}" class="btn btn-outline-primary btn-lg" style="font-size: 16px;">Change Password</a>
             </div>
@@ -90,7 +104,7 @@
               {{ profile_form.city }}
             </div>
 
-            <h4 class="mt-4" style="font-size: 18px;">Choose sports you like </h4>
+            <h4 class="mt-4" style="font-size: 18px;">Choose sports you like</h4>
             {{ formset.management_form }}
             {% for form in formset %}
             <div class="row mb-4">
@@ -147,6 +161,9 @@
   }
   .card-body .btn {
     margin-top: 1rem;
+  }
+  .account-img {
+    cursor: pointer;
   }
 </style>
 

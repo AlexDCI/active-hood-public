@@ -14,6 +14,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 from users.models import ProfileActivity
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.conf import settings
+from django.views.decorators.http import require_POST
+
 
 def home(request):
     return render(request, "users/home.html")
@@ -159,3 +163,22 @@ def delete_activity(request, activity_id):
 
     context = {'profile_activity': profile_activity}
     return render(request, 'users/delete_activity.html', context)
+
+
+@require_POST
+@login_required
+def send_invitation(request):
+    email = request.POST.get('email')
+    user_email = request.user.email
+
+    if email:
+        subject = "You're Invited to Join ActiveHood!"
+        message = f"Hi there!\n\n{request.user.first_name} {request.user.last_name} has invited you to join ActiveHood, a vibrant community for sports enthusiasts. Sign up now and connect with like-minded individuals!\n\nBest regards,\nThe ActiveHood Team"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        try:
+            send_mail(subject, message, from_email, [email])
+            messages.success(request, f"Invitation sent to {email}!")
+        except Exception as e:
+            messages.error(request, "Failed to send invitation. Please try again later.")
+    
+    return redirect('users-home')  # Redirect to the home page or wherever you prefer
