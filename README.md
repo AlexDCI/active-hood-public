@@ -115,3 +115,4 @@
      - EMAIL_HOST_USER: Set this to your email address
      - EMAIL_HOST_PASSWORD: Set this to your email password
    - Optionally, enable Less Secure Apps in your Google account settings for testing purposes.
+# active-hood-public
